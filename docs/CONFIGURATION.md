@@ -2479,6 +2479,19 @@ unknown name is reported as a config warning and ignored.
 stages = ["todo", "doing", "verify"]
 ```
 
+tuios moves a card on its own when it records a fact about the card's work: a
+plan held for approval, the holder's agent working, a fan check, a pull
+request opening, merging or closing ([CLI_REFERENCE.md](CLI_REFERENCE.md#tuios-task)
+has the table). A move fires only from the stages that fact moves a card
+from, never on a blocked or done card, and the card's history names the
+reason. `auto_stage = false` leaves every stage to you. A fan's stamp on a
+card (`tuios fan --task`) is still written.
+
+```toml
+[tasks]
+auto_stage = false
+```
+
 ## What a pane may do
 
 Every pane holds grants that say what a process in it may do through tuios:
