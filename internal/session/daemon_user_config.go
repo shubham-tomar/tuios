@@ -94,6 +94,8 @@ func DaemonConfigFromUser(uc *config.UserConfig) *DaemonConfig {
 	cfg.QueueMax = uc.Agents.Queue.MaxEntries()
 	// The daemon types the wake prompt for mail, so it reads whether to.
 	cfg.MailWakeOff = !uc.Agents.Mail.WakeOn()
+	// The daemon moves the task cards, so it reads whether to.
+	cfg.TaskAutoStageOff = !uc.Tasks.AutoStageOn()
 	// The daemon takes every checkpoint, so it reads whether to.
 	cfg.Checkpoints = uc.Agents.Checkpoints
 	// The daemon runs the herdr plugins, so it reads which ones.

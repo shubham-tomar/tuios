@@ -1641,6 +1641,9 @@ type Session struct {
 	// hostShown reports whether the session is on a screen. See
 	// SetHostShownProbe.
 	hostShown atomic.Pointer[func() bool]
+	// taskAuto reports whether cards move on their own. See
+	// SetTaskAutoProbe.
+	taskAuto atomic.Pointer[func() bool]
 }
 
 // SetGraphicsCapabilities records the graphics protocols tuios can forward to
@@ -3590,7 +3593,11 @@ func (s *Session) emitLifecycleLocked(before lifecycleSnapshot) {
 	events := diffLifecycle(before, snapshotLifecycle(s.state))
 	// A task card held by a pane that closed, or whose agent left, is let
 	// go here, in the change that closed it. See releasedTaskEvents.
-	events = append(events, releasedTaskEvents(s, s.state, events, time.Now().UnixNano())...)
+	// A card held by a pane whose agent started working leaves plan here,
+	// in the same change. See stagedTaskEvents.
+	now := time.Now().UnixNano()
+	events = append(events, releasedTaskEvents(s, s.state, events, now)...)
+	events = append(events, stagedTaskEvents(s, s.state, events, now)...)
 	moving := s.movingWindow
 	s.movingWindow = ""
 	for _, ev := range events {

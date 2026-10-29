@@ -693,6 +693,11 @@ func (d *Daemon) verbRequestApproval(cs *connState, params json.RawMessage) (any
 		return approvalResult(hold.id, <-hold.done), nil
 	}
 	LogBasic("Approval %s held for %s in %s (%s) for up to %s", hold.id, w.ID, sess.Name(), harnessID, holdFor)
+	// A plan held for the person moves the cards the pane holds to plan.
+	// See task_auto.go.
+	if hold.kind == AttentionPlan {
+		d.autoStage(sess, heldBy(w.ID), movePlanHeld, taskReasonPlanHeld)
+	}
 
 	var gone <-chan struct{}
 	if cs != nil && cs.conn != nil {

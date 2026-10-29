@@ -286,8 +286,9 @@ type SessionEvent struct {
 	hookWorktree, hookAgentSession string
 	hookRoot                       string
 	hookRunDir                     string
-	// taskRow and taskReason are an eventTaskReleased's card, as list-tasks
-	// gives it, and why it was let go (task.go).
+	// taskRow and taskReason are an eventTaskReleased's or eventTaskStaged's
+	// card, as list-tasks gives it, and why it was let go or moved (task.go,
+	// task_auto.go).
 	taskRow    *TaskRow
 	taskReason string
 }
@@ -319,6 +320,12 @@ const eventPaneFocused = "pane-focused"
 // eventCompletionSeen: the daemon's sink turns it into a task-changed
 // released event on the stream, and nothing else reads it.
 const eventTaskReleased = "task-released"
+
+// eventTaskStaged is raised by the state change that saw a pane's agent start
+// working, once per card the pane held that the change moved out of plan
+// (stagedTaskEvents). It is internal on the same terms as eventTaskReleased:
+// the daemon's sink turns it into a task-changed staged event on the stream.
+const eventTaskStaged = "task-staged"
 
 // eventProgramStatus is raised when a pane's OSC 7501 records changed. It is
 // internal: the daemon's sink copies the records into the window state and
